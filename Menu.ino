@@ -77,6 +77,40 @@ const char frame[5][16] = {
 int page = 0; // Pantallas que se presentan, en este caso 5
 int selectedIndex = 0; //Indice o pantalla que se seleccion
 int lastFrame = 4; //Ultima pantalla del lcd
+
+void loop(){  
+  EasyBuzzer.update();
+
+  if(enterMenu == true){
+    while(enterMenu == true){
+      asyncTemperatura.Stop();
+      asyncLuz.Stop();
+      menu.controlMenu();
+      controlConfigs();
+    }
+  }else{   
+    asyncTemperatura.Start();
+    asyncLuz.Start();
+    while(enterMenu == false){
+      asyncTemperatura.Update();
+      asyncLuz.Update();
+      controlConfigs();
+    }
+  }
+}
+
+void controlConfigs(){
+  char key = keypad.getKey();
+  if(key == '#' && enterMenu == true){
+    enterMenu = false;
+    lcd.clear();
+  }else if(key == '#' && enterMenu == false){
+    enterMenu = true;
+    lcd.clear();
+  }  
+}
+
+
 //---------------------------------Opciones de Menu---------------------------------
 void imprimirMenu(){
   lcd.setCursor(0,0);
