@@ -19,6 +19,8 @@ const int fotoPin = A2;
 const int soundPin = A3;
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+unsigned int frequency = 1000;
+unsigned int duration = 1000;
 
 const byte ROWS = 4; //four rows
 const byte COLS = 3; //three columns
@@ -60,7 +62,6 @@ void setup(){
   pinMode(btn, INPUT);
   //pinMode(bzz, OUTPUT);
   //Activar el buzzer, o alarma
-  EasyBuzzer.setPin(bzz);
 
   //Inicia las tareas para la temperatura
   asyncTemperatura.Start();
@@ -81,17 +82,17 @@ int lastFrame = 4; //Ultima pantalla del lcd
 void loop(){  
   EasyBuzzer.update();
 
-  if(enterMenu == true){
-    while(enterMenu == true){
+  if(enter == true){
+    while(enter == true){
       asyncTemperatura.Stop();
       asyncLuz.Stop();
-      menu.controlMenu();
+      controlMenu();
       controlConfigs();
     }
   }else{   
     asyncTemperatura.Start();
     asyncLuz.Start();
-    while(enterMenu == false){
+    while(enter == false){
       asyncTemperatura.Update();
       asyncLuz.Update();
       controlConfigs();
@@ -101,11 +102,11 @@ void loop(){
 
 void controlConfigs(){
   char key = keypad.getKey();
-  if(key == '#' && enterMenu == true){
-    enterMenu = false;
+  if(key == '#' && enter == true){
+    enter = false;
     lcd.clear();
-  }else if(key == '#' && enterMenu == false){
-    enterMenu = true;
+  }else if(key == '#' && enter == false){
+    enter = true;
     lcd.clear();
   }  
 }
@@ -357,7 +358,7 @@ void Luz(){
 }
 
 void Sonido(){
-
+    EasyBuzzer.singleBeep(frequency, duration);
 }
 //---------------------------------Retorno de variables---------------------------------
 float getTempAlta(){
@@ -365,4 +366,4 @@ float getTempAlta(){
 }
 float getTempBaja(){
   return tempBaja;
-}
+} 
