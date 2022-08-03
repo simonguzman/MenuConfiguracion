@@ -1,7 +1,7 @@
 #include <LiquidCrystal.h>
 #include <Keypad.h>
-//#include "AsyncTaskLib.h"
-//#include <EasyBuzzer.h>
+#include "AsyncTaskLib.h"
+#include <EasyBuzzer.h>
 //------------Colocar su conexion-----------------------
 LiquidCrystal lcd(2, 3, 7, 6, 5, 4);
 
@@ -47,11 +47,11 @@ boolean enterMenu = false;
 
 void leerTemp();
 //Asynctask es la opcion para una tarea asincrona de la temperatura
-//AsyncTask asyncTemperatura(2000, true, leerTemp );
+AsyncTask asyncTemperatura(2000, true, leerTemp );
 
 void luz();
 //Asynctask es la opcion para una tarea asincrona de la luz
-//AsyncTask asyncLuz(2000, true, luz );
+AsyncTask asyncLuz(2000, true, luz );
 int outputValue = 0;
 
 void setup(){
@@ -68,8 +68,8 @@ void setup(){
   //Activar el buzzer, o alarma
 
   //Inicia las tareas para la temperatura
-  //asyncTemperatura.Start();
-  //asyncLuz.Start();
+  asyncTemperatura.Start();
+  asyncLuz.Start();
 }
 
 const char frame[5][16] = {
@@ -84,24 +84,24 @@ int selectedIndex = 0; //Indice o pantalla que se seleccion
 int lastFrame = 4; //Ultima pantalla del lcd
 void loop(){  
   //Activa el buzzer y lo matiene activo
-  //EasyBuzzer.update();
+  EasyBuzzer.update();
   //Si entra aqui entonces entro al submenu y las tareas asincronas se paran
   if(enterMenu != true){
     while(enterMenu != true){
-      //asyncTemperatura.Stop();
-      //asyncLuz.Stop();
+      asyncTemperatura.Stop();
+      asyncLuz.Stop();
       controlMenu();
-      //controlConfigs();
+      controlConfigs();
     }
   }else{  
     
     //Si no pues hace lo contrario 
-    //asyncTemperatura.Start();
-    //asyncLuz.Start();
+    asyncTemperatura.Start();
+    asyncLuz.Start();
     while(enterMenu != false){
       Serial.println("Ah");
-      //asyncTemperatura.Update();
-      //asyncLuz.Update();
+      asyncTemperatura.Update();
+      asyncLuz.Update();
       controlConfigs();
     }
   }
@@ -167,11 +167,11 @@ void controlMenu(){
  
  if (key == '0'){
    lcd.clear();
-   //EasyBuzzer.singleBeep(200, 80);
+   EasyBuzzer.singleBeep(200, 80);
    selectedIndex++;
  }else if(key == '*'){
    lcd.clear();
-   //EasyBuzzer.singleBeep(200, 80);
+   EasyBuzzer.singleBeep(200, 80);
    selectedIndex--;
  }else if(digitalRead(btn) == 1){
    enterMenu = true;
@@ -294,23 +294,23 @@ char key = keypad.getKey();
   if(key){
     if (key == '0' && tempAlta < 40.f ){
      tempAlta = tempAlta + 1.0f;
-     //EasyBuzzer.stopBeep();
+     EasyBuzzer.stopBeep();
      analogWrite(RED, 0);
     }else if(key == '*' && tempAlta > 24.0f){
      tempAlta = tempAlta - 1.0f;
-     //EasyBuzzer.stopBeep();
+     EasyBuzzer.stopBeep();
      analogWrite(RED, 0);
     }else if(digitalRead(btn) == 0 && enterMenu == true){
      enterMenu = false;
      analogWrite(RED, 0);
       }
  
- //EasyBuzzer.stopBeep();
+ EasyBuzzer.stopBeep();
 } 
 
 if(key == '0' && tempAlta == 40.f || key == '*' && tempAlta == 24.0f){
  analogWrite(RED, 255);
- //EasyBuzzer.beep(180, 100, 60, 5, 1000, 2);
+ EasyBuzzer.beep(180, 100, 60, 5, 1000, 2);
 }
 
 
@@ -329,20 +329,20 @@ void configTempBaja(){
  if (key == '0' && tempBaja < 19.0f){
  tempBaja = tempBaja + 1.0f;
  analogWrite(BLUE, 0);
- //EasyBuzzer.stopBeep();
+ EasyBuzzer.stopBeep();
  }else if(key == '*' && tempBaja > 0.0f){
  tempBaja = tempBaja - 1.0f;
  analogWrite(BLUE, 0);
- //EasyBuzzer.stopBeep();
+ EasyBuzzer.stopBeep();
  }else if(digitalRead(btn) == 0 && enterMenu == true){
  enterMenu = false;
  analogWrite(BLUE, 0);
- //EasyBuzzer.stopBeep();
+ EasyBuzzer.stopBeep();
   }
  } 
  if(key == '0' && tempBaja > 18.0f || key == '*' && tempBaja == 0.0f){
  analogWrite(BLUE, 255);
- //EasyBuzzer.beep(180, 100, 60, 5, 1000, 2);
+ EasyBuzzer.beep(180, 100, 60, 5, 1000, 2);
  }
  lcd.setCursor(0,1);
  lcd.print("Valor: ");
@@ -359,20 +359,20 @@ void Luz(){
  if (key == '0' && intensidad < 18.0f){
  tempBaja = tempBaja + 1.0f;
  analogWrite(RED, 0);
- //EasyBuzzer.stopBeep();
+ EasyBuzzer.stopBeep();
  }else if(key == '*' && tempBaja > 0.0f){
  tempBaja = tempBaja - 1.0f;
  analogWrite(RED, 0);
- //EasyBuzzer.stopBeep();
+ EasyBuzzer.stopBeep();
  }else if(digitalRead(btn) == 0 && enterMenu == true){
  enterMenu = false;
  analogWrite(RED, 0);
- //EasyBuzzer.stopBeep();
+ EasyBuzzer.stopBeep();
   }
  } 
  if(key == '0' && tempBaja == 18.0f || key == '*' && tempBaja == 0.0f){
  analogWrite(RED, 255);
- //EasyBuzzer.beep(180, 100, 60, 5, 1000, 2);
+ EasyBuzzer.beep(180, 100, 60, 5, 1000, 2);
  }
  lcd.setCursor(0,1);
  lcd.print("Valor: ");
@@ -397,4 +397,4 @@ float getTempAlta(){
 }
 float getTempBaja(){
  return tempBaja;
-} 
+}   
